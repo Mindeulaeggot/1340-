@@ -74,7 +74,13 @@ int main() {
 
         // Handle player action
         if (input == "help") {
-            cout << "\nYou can type 'look' to look around the room, 'take [item name]' to pick up an item, 'use [item name]' to use an item, 'unlock' to try to unlock the door, or 'quit' to exit the game.\n" << endl;
+            cout << "\nHere is a list of available commands:\n" << endl;
+            cout << " - look: Look around the room and check for any hidden dangers or items." << endl;
+            cout << " - take [item name]: Pick up an item found in the room and add it to your inventory." << endl;
+            cout << " - use [item name]: Use an item from your inventory. Usage varies depending on the item." << endl;
+            cout << " - unlock: Attempt to unlock the door if you have the key in your inventory." << endl;
+            cout << " - quit: Exit the game at any time." << endl;
+            cout << "\nRemember to explore carefully and manage your sanity while trying to escape the haunted mansion.\n" << endl;
         }
         else if (input == "look") {
             // Generate random ghost encounter
