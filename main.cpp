@@ -48,18 +48,25 @@ int main() {
     // Seed random number generator
     srand(time(0));
 
+       // Initialize game variables
+    vector<Room> allRooms;
+    for (int i = 0; i < NUM_ROOMS; i++) {
+        allRooms.push_back(generateRandomRoom());
+    }
+
     // Initialize game variables
     Room currentRoom = generateRandomRoom();
     vector<Item> inventory;
     generateItems(inventory);
     int sanity = MAX_SANITY;
     bool gameRunning = true;
+    int numVisitedRooms = 0;
 
     // Print game intro
     printIntro();
 
     // Game loop
-    while (gameRunning) {
+    while (gameRunning && numVisitedRooms < NUM_ROOMS) {
         // Print current room and inventory
         printRoom(currentRoom);
         printInventory(inventory);
@@ -74,14 +81,15 @@ int main() {
 
         // Handle player action
         if (input == "help") {
-            cout << "\nHere is a list of available commands:\n" << endl;
-            cout << " - look: Look around the room and check for any hidden dangers or items." << endl;
-            cout << " - take [item name]: Pick up an item found in the room and add it to your inventory." << endl;
-            cout << " - use [item name]: Use an item from your inventory. Usage varies depending on the item." << endl;
-            cout << " - unlock: Attempt to unlock the door if you have the key in your inventory." << endl;
-            cout << " - quit: Exit the game at any time." << endl;
-            cout << "\nRemember to explore carefully and manage your sanity while trying to escape the haunted mansion.\n" << endl;
+        cout << "\nHere is a list of available commands:\n" << endl;
+        cout << " - look: Look around the room and check for any hidden dangers or items." << endl;
+        cout << " - take [item name]: Pick up an item found in the room and add it to your inventory." << endl;
+        cout << " - use [item name]: Use an item from your inventory. Usage varies depending on the item." << endl;
+        cout << " - unlock: Attempt to unlock the door if you have the key in your inventory." << endl;
+        cout << " - quit: Exit the game at any time." << endl;
+        cout << "\nRemember to explore carefully and manage your sanity while trying to escape the haunted mansion.\n" << endl;
         }
+
         else if (input == "look") {
             // Generate random ghost encounter
             if (rand() % 100 < currentRoom.ghostChance) {
@@ -155,8 +163,16 @@ int main() {
 
         // Check if player has won
         if (!currentRoom.isLocked && currentRoom.items.empty()) {
-            gameRunning = false;
-            cout << "Congratulations! You have escaped the haunted mansion!" << endl;
+            numVisitedRooms++;
+            if (numVisitedRooms == NUM_ROOMS) {
+                gameRunning = false;
+                cout << "Congratulations! You have escaped the haunted mansion!" << endl;
+            } else {
+                cout << "You have found the key and unlocked the door! ";
+                cout << "You must escape from the " << NUM_ROOMS - numVisitedRooms << " remaining rooms." << endl;
+                currentRoom = generateRandomRoom();
+                generateItems(currentRoom.items);
+            }
         }
 
         // Check if player has lost
