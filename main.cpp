@@ -11,7 +11,7 @@ using namespace std;
 const int MAX_SANITY = 100;
 const int MIN_SANITY = 0;
 const int NUM_ROOMS = 5;
-const int NUM_ITEMS = 3;
+const int NUM_ITEMS = 2;
 const int NUM_GHOSTS = 3;
 
 // Define struct for game objects
@@ -19,7 +19,9 @@ struct Item {
     string name;
     string description;
     bool isKey;
+    int count;
 };
+
 
 struct Room {
     string name;
@@ -219,7 +221,7 @@ void printInventory(vector<Item> inventory) {
     else {
         cout << "You have the following items in your inventory:" << endl;
         for (int i = 0; i < inventory.size(); i++) {
-            cout << " - " << inventory[i].name;
+            cout << " - " << inventory[i].name << " (" << inventory[i].count << ")";
             if (inventory[i].isKey) {
                 cout << " (key)";
             }
@@ -228,9 +230,22 @@ void printInventory(vector<Item> inventory) {
     }
 }
 
+
 void addItem(vector<Item>& inventory, Item newItem) {
-    inventory.push_back(newItem);
+    bool itemFound = false;
+    for (Item& item : inventory) {
+        if (item.name == newItem.name) {
+            item.count++;
+            itemFound = true;
+            break;
+        }
+    }
+    if (!itemFound) {
+        newItem.count = 1;
+        inventory.push_back(newItem);
+    }
 }
+
 
 void removeItem(vector<Item>& inventory, int itemIndex) {
     inventory.erase(inventory.begin() + itemIndex);
@@ -287,31 +302,21 @@ Room generateRandomRoom() {
 
 void generateItems(vector<Item>& items) {
     // Define possible items
-    string names[NUM_ITEMS] = {"key", "flashlight", "book"};
-    string descriptions[NUM_ITEMS] = {"a shiny metal key", 
-                                      "a small flashlight with a working battery", 
+    string names[NUM_ITEMS] = {"flashlight", "book"};
+    string descriptions[NUM_ITEMS] = {"a small flashlight with a working battery",
                                       "a thick book with strange symbols on the cover"};
-    bool isKeys[NUM_ITEMS] = {true, false, false};
+    bool isKeys[NUM_ITEMS] = {false, false};
 
     // Clear input vector
     items.clear();
 
-    // Generate random item indices
-    vector<int> itemIndices;
-    for (int i = 0; i < NUM_ITEMS; i++) {
-        itemIndices.push_back(i);
-    }
-    shuffle(itemIndices.begin(), itemIndices.end(), mt19937{random_device{}()});
-
-    // Add random items to input vector
-    for (int i = 0; i < NUM_ITEMS; i++) {
-        Item newItem;
-        newItem.name = names[itemIndices[i]];
-        newItem.description = descriptions[itemIndices[i]];
-        newItem.isKey = isKeys[itemIndices[i]];
-        items.push_back(newItem);
-    }
+    // Add flashlight and book to inventory
+    Item flashlight = {names[0], descriptions[0], isKeys[0]};
+    Item book = {names[1], descriptions[1], isKeys[1]};
+    items.push_back(flashlight);
+    items.push_back(book);
 }
+
 
 void generateGhosts(int& numGhosts) {
     // Generate random number of ghosts
@@ -378,4 +383,3 @@ void loadGame(Room& currentRoom, vector<Item>& inventory, int& sanity) {
     // Close the file
     file.close();
 }
-
