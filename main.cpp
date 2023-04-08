@@ -383,3 +383,4 @@ void loadGame(Room& currentRoom, vector<Item>& inventory, int& sanity) {
     // Close the file
     file.close();
 }
+// tired
